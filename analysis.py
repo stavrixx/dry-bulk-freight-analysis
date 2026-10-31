@@ -1,17 +1,4 @@
-"""
-What drives dry bulk freight rates? Baltic Dry Index (BDI) vs. iron ore prices.
 
-Question: Do iron ore prices help explain or lead the BDI, and how much of the BDI's
-movement do they actually explain once we avoid the "spurious regression" trap?
-
-Data (both free):
-  1. BDI daily history  -> download CSV by hand (see README), save as data/bdi.csv
-  2. Iron ore price     -> IMF monthly series via FRED (PIORECRUSDM), fetched automatically
-                           (falls back to data/iron_ore.csv if you have no internet)
-
-Run:  python analysis.py
-Outputs: charts in /output and a results.txt you quote in your note.
-"""
 import os
 import numpy as np
 import pandas as pd
