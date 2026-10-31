@@ -1,24 +1,26 @@
-# What drives dry bulk freight rates? Baltic Dry Index vs. iron ore
+Does iron ore explain dry bulk freight rates?
 
-**Question:** how much of the movement in dry bulk freight rates (BDI) does the iron ore price explain, and does iron ore lead freight?
+I did a shipbroking internship at Hellaschart in July 2026 and kept hearing that dry bulk rates basically follow commodity demand, especially iron ore. I wanted to see if that actually shows up in the data, so I compared the Baltic Dry Index (BDI) with the iron ore price from 2010 to 2026.
 
-## Run it
-1. `pip install pandas numpy matplotlib`
-2. Download BDI daily history as a CSV from a free source (Investing.com "Baltic Dry Index historical data", or Trading Economics) and save it as `data/bdi.csv`. It needs a date column and a price/close column.
-3. `python analysis.py` (iron ore is pulled from FRED, series PIORECRUSDM; if you are offline, save it as `data/iron_ore.csv` with columns date, value).
-4. Results appear in `output/results.txt`, charts in `output/levels.png` and `output/scatter.png`.
+What I found
+In levels the two look related (correlation of about 0.52 on the logs), but a lot of that is probably just both of them going up and down with the same big cycles (2015-16 low, 2020-21 spike).
+Looking at monthly % changes instead, the correlation is basically 0 (0.02) and R-squared is 0.00. So month to month, iron ore doesn't explain the BDI.
+The only thing that showed up was a small correlation of 0.19 when iron ore leads the BDI by 2 months. I tested lags from 0 to 6 months and picked the best one, so this could easily be luck. I wouldn't say it's a real result.
+The relationship also isn't stable. The correlation of changes goes from -0.08 (2010-14) to 0.09 (2015-19), 0.09 (2020-22) and -0.20 (2023-26).
+Why I think it's so weak
+The BDI is only about 40% Capesize, and Capesize is the part that carries iron ore. Panamax and Supramax carry things like coal and grain.
+Freight depends on how much gets shipped and on supply (fleet size, port congestion), not just on the price of the cargo.
+I used monthly averages, which smooths out a lot.
+Data
+data/iron_ore.csv: IMF global iron ore price (USD per tonne, monthly), from FRED (series PIORECRUSDM).
+BDI: daily history from Investing.com. I didn't upload it because the BDI belongs to the Baltic Exchange. If you want to run the code, download it from Investing.com (Historical Data, Aug 2010 to now) and save it as data/bdi.csv.
+How to run
+pip install pandas numpy matplotlib
+python analysis.py
 
-## Method (one paragraph for your write-up)
-BDI daily data is averaged to monthly and merged with the monthly IMF iron ore price (2010 onward). Because both series trend and move in cycles, a regression on levels can look strong without meaning anything (spurious regression), so the main test uses monthly log changes. I also test whether iron ore leads the BDI by 0-6 months and whether the relationship is stable across sub-periods.
+Results are saved in output/ (results.txt and two charts).
 
-## Limits to state honestly
-- The BDI is a composite of Capesize, Panamax and Supramax rates, and Capesize (about 40% weight) is the iron ore segment, so the relationship should be strongest there. Say what a Capesize-only series would add.
-- Iron ore is one demand driver among several: coal, grains, fleet supply growth, port congestion and bunker costs also matter.
-- Monthly averaging smooths short-term spikes; correlation is not causation.
-
-## Note structure (2 pages)
-1. The question and why it matters (3 sentences, link to chartering decisions)
-2. Data and method (1 paragraph above)
-3. Findings: levels vs. changes correlation, R-squared, best lag, stability by period. Only quote numbers from your own `results.txt`.
-4. What explains the rest (supply side: fleet growth, congestion; other cargoes)
-5. Limits, and what you'd do next (Capesize-only rates, add China steel output)
+Things I'd do next
+Use Capesize rates only, since that's the iron ore segment
+Add iron ore import volumes or Chinese steel output instead of just the price
+Try quarterly changes instead of monthly
