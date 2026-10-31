@@ -20,7 +20,4 @@ python analysis.py
 
 Results are saved in output/ (results.txt and two charts).
 
-Things I'd do next
-Use Capesize rates only, since that's the iron ore segment
-Add iron ore import volumes or Chinese steel output instead of just the price
-Try quarterly changes instead of monthly
+
