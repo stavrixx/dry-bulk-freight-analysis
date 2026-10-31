@@ -1,0 +1,24 @@
+Sample: Sep 2010 to Sep 2026 (193 months)
+
+Correlation of log LEVELS:   0.52  (can be inflated by shared trends)
+Correlation of monthly CHANGES: 0.02  (the more honest number)
+
+Correlation of this month's BDI change with iron ore change k months EARLIER:
+  lag 0 months: 0.02
+  lag 1 months: 0.11
+  lag 2 months: 0.19
+  lag 3 months: 0.16
+  lag 4 months: 0.08
+  lag 5 months: 0.03
+  lag 6 months: -0.12
+Strongest lag: 2 months (corr 0.19)
+
+OLS: monthly BDI % change = a + b * monthly iron ore % change
+  b = 0.05 (std. err. 0.19, t = 0.2),  R-squared = 0.00
+  Interpretation: R-squared is the share of monthly BDI movement iron ore explains.
+
+Correlation of monthly changes by period (is the relationship stable?):
+  2010-2014: -0.08  (n=52)
+  2015-2019: 0.09  (n=60)
+  2020-2022: 0.09  (n=36)
+  2023-2026: -0.20  (n=45)
