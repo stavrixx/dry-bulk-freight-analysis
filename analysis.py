@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 os.makedirs("output", exist_ok=True)
 
-# ---------- 1. Load data ----------
+
 def load_bdi(path="data/bdi.csv"):
     df = pd.read_csv(path)
     # Find the date and price columns whatever the site called them
@@ -17,14 +17,14 @@ def load_bdi(path="data/bdi.csv"):
     df[date_col] = pd.to_datetime(df[date_col])
     s = (df.set_index(date_col)[price_col]
            .astype(str).str.replace(",", "").astype(float).sort_index())
-    return s.resample("MS").mean().rename("bdi")          # monthly average
+    return s.resample("MS").mean().rename("bdi")         
 
 def load_iron_ore():
     url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PIORECRUSDM"
     try:
         df = pd.read_csv(url)
     except Exception:
-        df = pd.read_csv("data/iron_ore.csv")             # same two columns: observation_date, value
+        df = pd.read_csv("data/iron_ore.csv")            
     df.columns = ["date", "ore"]
     df["date"] = pd.to_datetime(df["date"])
     df["ore"] = pd.to_numeric(df["ore"], errors="coerce")
@@ -34,19 +34,19 @@ bdi, ore = load_bdi(), load_iron_ore()
 data = pd.concat([bdi, ore], axis=1).dropna()
 data = data[data.index >= "2010-09-01"]
 data["ln_bdi"], data["ln_ore"] = np.log(data["bdi"]), np.log(data["ore"])
-data["d_bdi"], data["d_ore"] = data["ln_bdi"].diff(), data["ln_ore"].diff()   # monthly % changes
+data["d_bdi"], data["d_ore"] = data["ln_bdi"].diff(), data["ln_ore"].diff()   
 n_months = len(data)
 
 out = []
 out.append(f"Sample: {data.index.min():%b %Y} to {data.index.max():%b %Y} ({n_months} months)\n")
 
-# ---------- 2. Levels vs. changes ----------
+
 corr_levels = data["ln_bdi"].corr(data["ln_ore"])
 corr_changes = data["d_bdi"].corr(data["d_ore"])
 out.append(f"Correlation of log LEVELS:   {corr_levels:.2f}  (can be inflated by shared trends)")
 out.append(f"Correlation of monthly CHANGES: {corr_changes:.2f}  (the more honest number)\n")
 
-# ---------- 3. Does iron ore lead the BDI? ----------
+
 out.append("Correlation of this month's BDI change with iron ore change k months EARLIER:")
 lag_rows = []
 for k in range(0, 7):
@@ -56,7 +56,7 @@ for k in range(0, 7):
 best = max(lag_rows, key=lambda x: abs(x[1]) if not np.isnan(x[1]) else 0)
 out.append(f"Strongest lag: {best[0]} months (corr {best[1]:.2f})\n")
 
-# ---------- 4. Simple OLS: BDI change on iron ore change (numpy only) ----------
+
 d = data[["d_bdi", "d_ore"]].dropna()
 X = np.column_stack([np.ones(len(d)), d["d_ore"].values])
 y = d["d_bdi"].values
@@ -69,7 +69,7 @@ out.append("OLS: monthly BDI % change = a + b * monthly iron ore % change")
 out.append(f"  b = {beta[1]:.2f} (std. err. {se[1]:.2f}, t = {beta[1]/se[1]:.1f}),  R-squared = {r2:.2f}")
 out.append("  Interpretation: R-squared is the share of monthly BDI movement iron ore explains.\n")
 
-# ---------- 5. Sub-period stability ----------
+
 out.append("Correlation of monthly changes by period (is the relationship stable?):")
 for a, b in [("2010", "2014"), ("2015", "2019"), ("2020", "2022"), ("2023", "2030")]:
     sub = data.loc[a:b]
@@ -79,7 +79,7 @@ for a, b in [("2010", "2014"), ("2015", "2019"), ("2020", "2022"), ("2023", "203
 open("output/results.txt", "w").write("\n".join(out))
 print("\n".join(out))
 
-# ---------- 6. Charts ----------
+
 fig, ax = plt.subplots(figsize=(9, 4.5))
 ax.plot(data.index, data["bdi"], color="#1f4e79", label="BDI (monthly avg)")
 ax.set_ylabel("BDI")
